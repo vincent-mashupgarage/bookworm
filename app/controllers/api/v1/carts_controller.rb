@@ -26,6 +26,23 @@ class Api::V1::CartsController < Api::V1::ApiController
         render_error(@cart.errors.full_messages, :unprocessable_entity)
       end
     end
+
+
+    def update
+      if @cart.update(cart_params)
+        render_success(@cart.as_json(
+          include: {
+            cart_items: {
+              include: {
+                book: { include: :category }
+              }
+            }
+          }
+        ))
+      else
+        render_error(@cart.errors.full_messages, :unprocessable_entity)
+      end
+    end
     
     # DELETE /api/v1/carts/:id/clear
     def clear

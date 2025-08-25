@@ -40,6 +40,7 @@ gem "devise"
 gem "devise-jwt"
 gem "rack-cors"
 gem "jsonapi-serializer"
+gem "kaminari"  # for pagination
 gem "image_processing", "~> 1.2"  #this is for book covers later on 
 
 group :development, :test do

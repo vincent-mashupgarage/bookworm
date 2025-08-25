@@ -71,10 +71,20 @@ class Api::V1::BooksController < Api::V1::ApiController
     end
     
     def book_params
-      params.require(:book).permit(
-        :title, :author, :description, :price, :stock_quantity, 
-        :isbn, :publisher, :publication_date, :page_count, 
-        :language, :category_id
-      )
+      # Handle cases where parameters might not be nested under :book
+      if params[:book].present?
+        params.require(:book).permit(
+          :title, :author, :description, :price, :stock_quantity, 
+          :isbn, :publisher, :publication_date, :page_count, 
+          :language, :category_id
+        )
+      else
+        # Fallback: try to get parameters directly
+        params.permit(
+          :title, :author, :description, :price, :stock_quantity, 
+          :isbn, :publisher, :publication_date, :page_count, 
+          :language, :category_id
+        )
+      end
     end
   end
