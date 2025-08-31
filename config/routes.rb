@@ -3,6 +3,11 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      # Authentication routes
+      post 'auth/login', to: 'auth#login'
+      delete 'auth/logout', to: 'auth#logout'
+      get 'auth/me', to: 'auth#me'
+      
       # Books
       resources :books do
         get :show_by_slug, on: :collection, path: 'slug/:slug'
