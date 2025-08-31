@@ -1,0 +1,33 @@
+sequenceDiagram
+    participant C as Client
+    participant API as API Controller
+    participant M as Model
+    participant DB as Database
+    
+    Note over C,DB: Book Browsing Flow
+    C->>API: GET /api/v1/books?category_id=1&search=ruby
+    API->>M: Book.includes(:category)
+    M->>DB: SELECT books.*, categories.* WHERE...
+    DB-->>M: Book records with categories
+    M-->>API: @books with pagination
+    API-->>C: JSON response with books & meta
+    
+    Note over C,DB: Add to Cart Flow
+    C->>API: POST /api/v1/carts/1/cart_items
+    API->>M: CartItem.new(cart_id, book_id, quantity)
+    M->>DB: INSERT INTO cart_items...
+    DB-->>M: Created cart_item
+    M-->>API: @cart_item
+    API-->>C: JSON success response
+    
+    Note over C,DB: Order Creation Flow
+    C->>API: POST /api/v1/orders
+    API->>M: Order.new(user_id, total_amount)
+    M->>DB: BEGIN TRANSACTION
+    M->>DB: INSERT INTO orders...
+    M->>DB: INSERT INTO order_items...
+    M->>DB: UPDATE books SET stock_quantity...
+    M->>DB: COMMIT TRANSACTION
+    DB-->>M: Order with items created
+    M-->>API: @order with order_items
+    API-->>C: JSON order confirmation

@@ -1,0 +1,59 @@
+graph TB
+    Start[Customer Visits Store]
+    
+    %% Browse Books
+    Browse[Browse Books<br/>GET /api/v1/books]
+    Filter[Apply Filters<br/>?category_id=X&search=Y]
+    ViewBook[View Book Details<br/>GET /api/v1/books/:id]
+    
+    %% Authentication
+    Auth{Authenticated?}
+    Register[Register<br/>POST /api/v1/users]
+    Login[Login Process]
+    
+    %% Cart Management
+    GetCart[Get User Cart<br/>GET /api/v1/users/:user_id/cart]
+    CreateCart[Create Cart<br/>POST /api/v1/users/:user_id/cart]
+    AddToCart[Add to Cart<br/>POST /api/v1/carts/:id/cart_items]
+    UpdateCart[Update Quantities<br/>PATCH /api/v1/carts/:id/cart_items/:id]
+    ViewCart[Review Cart<br/>GET /api/v1/carts/:id]
+    
+    %% Checkout Process
+    Checkout[Proceed to Checkout]
+    CreateOrder[Create Order<br/>POST /api/v1/orders]
+    AddOrderItems[Add Order Items<br/>POST /api/v1/orders/:id/order_items]
+    ProcessPayment[Process Payment<br/>External Integration]
+    UpdateStatus[Update Order Status<br/>PATCH /api/v1/orders/:id]
+    ClearCart[Clear Cart<br/>DELETE /api/v1/carts/:id/clear]
+    
+    %% Order Tracking
+    OrderComplete[Order Confirmation]
+    TrackOrder[Track Order<br/>GET /api/v1/orders/:id]
+    
+    %% Flow
+    Start --> Browse
+    Browse --> Filter
+    Filter --> ViewBook
+    ViewBook --> Auth
+    
+    Auth -->|No| Register
+    Auth -->|No| Login
+    Register --> GetCart
+    Login --> GetCart
+    Auth -->|Yes| GetCart
+    
+    GetCart -->|Cart Exists| AddToCart
+    GetCart -->|No Cart| CreateCart
+    CreateCart --> AddToCart
+    
+    AddToCart --> UpdateCart
+    UpdateCart --> ViewCart
+    ViewCart --> Checkout
+    
+    Checkout --> CreateOrder
+    CreateOrder --> AddOrderItems
+    AddOrderItems --> ProcessPayment
+    ProcessPayment --> UpdateStatus
+    UpdateStatus --> ClearCart
+    ClearCart --> OrderComplete
+    OrderComplete --> TrackOrder

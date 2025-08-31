@@ -1,0 +1,76 @@
+graph TB
+    %% External Actors
+    Customer[Customer]
+    Admin[Admin]
+    
+    %% API Layer
+    subgraph "API Layer (/api/v1/)"
+        ApiController[Api::V1::ApiController<br/>Base Controller]
+        BooksAPI[Books Controller]
+        CategoriesAPI[Categories Controller]
+        UsersAPI[Users Controller]
+        CartsAPI[Carts Controller]
+        OrdersAPI[Orders Controller]
+        CartItemsAPI[Cart Items Controller]
+        OrderItemsAPI[Order Items Controller]
+    end
+    
+    %% Business Logic Layer
+    subgraph "Models & Business Logic"
+        UserModel[User Model<br/>- Authentication<br/>- Role Management]
+        BookModel[Book Model<br/>- Inventory<br/>- Slug Generation]
+        CategoryModel[Category Model<br/>- Hierarchy]
+        CartModel[Cart Model<br/>- User Association]
+        CartItemModel[Cart Item Model<br/>- Quantity Validation]
+        OrderModel[Order Model<br/>- Status Tracking]
+        OrderItemModel[Order Item Model<br/>- Price History]
+    end
+    
+    %% Data Layer
+    subgraph "Database (PostgreSQL)"
+        UsersTable[(users)]
+        BooksTable[(books)]
+        CategoriesTable[(categories)]
+        CartsTable[(carts)]
+        CartItemsTable[(cart_items)]
+        OrdersTable[(orders)]
+        OrderItemsTable[(order_items)]
+    end
+    
+    %% Flow Connections
+    Customer --> BooksAPI
+    Customer --> CartsAPI
+    Customer --> OrdersAPI
+    Customer --> UsersAPI
+    
+    Admin --> BooksAPI
+    Admin --> CategoriesAPI
+    Admin --> OrdersAPI
+    Admin --> UsersAPI
+    
+    %% API to Models
+    BooksAPI --> BookModel
+    CategoriesAPI --> CategoryModel
+    UsersAPI --> UserModel
+    CartsAPI --> CartModel
+    OrdersAPI --> OrderModel
+    CartItemsAPI --> CartItemModel
+    OrderItemsAPI --> OrderItemModel
+    
+    %% Models to Database
+    UserModel --> UsersTable
+    BookModel --> BooksTable
+    CategoryModel --> CategoriesTable
+    CartModel --> CartsTable
+    CartItemModel --> CartItemsTable
+    OrderModel --> OrdersTable
+    OrderItemModel --> OrderItemsTable
+    
+    %% Relationships
+    UsersTable -.-> CartsTable
+    UsersTable -.-> OrdersTable
+    CategoriesTable -.-> BooksTable
+    CartsTable -.-> CartItemsTable
+    BooksTable -.-> CartItemsTable
+    OrdersTable -.-> OrderItemsTable
+    BooksTable -.-> OrderItemsTable

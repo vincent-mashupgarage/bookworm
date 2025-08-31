@@ -1,0 +1,81 @@
+erDiagram
+    USER {
+        id bigint PK
+        email string UK
+        password_digest string
+        name string
+        address text
+        role string
+        created_at datetime
+        updated_at datetime
+    }
+    
+    CATEGORY {
+        id bigint PK
+        name string UK
+        description text
+        created_at datetime
+        updated_at datetime
+    }
+    
+    BOOK {
+        id bigint PK
+        title string
+        author string
+        description text
+        price decimal
+        stock_quantity integer
+        isbn string UK
+        publisher string
+        publication_date date
+        page_count integer
+        language string
+        slug string UK
+        category_id bigint FK
+        created_at datetime
+        updated_at datetime
+    }
+    
+    CART {
+        id bigint PK
+        user_id bigint FK
+        created_at datetime
+        updated_at datetime
+    }
+    
+    CART_ITEM {
+        id bigint PK
+        cart_id bigint FK
+        book_id bigint FK
+        quantity integer
+        created_at datetime
+        updated_at datetime
+    }
+    
+    ORDER {
+        id bigint PK
+        user_id bigint FK
+        total_amount decimal
+        status string
+        shipping_address text
+        created_at datetime
+        updated_at datetime
+    }
+    
+    ORDER_ITEM {
+        id bigint PK
+        order_id bigint FK
+        book_id bigint FK
+        quantity integer
+        price_at_purchase decimal
+        created_at datetime
+        updated_at datetime
+    }
+    
+    USER ||--o{ CART : "has many"
+    USER ||--o{ ORDER : "places"
+    CATEGORY ||--o{ BOOK : "contains"
+    CART ||--o{ CART_ITEM : "contains"
+    BOOK ||--o{ CART_ITEM : "added to"
+    ORDER ||--o{ ORDER_ITEM : "contains"
+    BOOK ||--o{ ORDER_ITEM : "purchased as"
